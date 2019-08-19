@@ -11,11 +11,15 @@ node{
         }
     }
     stage('AB CodeReview'){
-        wihMaven(maven:'MyMaven'){
-            sh 'mvn pmd:pmd'   
+        try {
+            withMaven(maven:'MyMaven'){
+                sh 'mvn pmd:pmd'   
+            }
+        } finally {
+            pmd canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'target/pmd.xml', unHealthy: ''
         }
-        // publish visuals of target/pmd.xml
     }
+        
     stage('AB Package'){
         withMaven(maven:'MyMaven'){
             sh 'mvn package'
